@@ -5,7 +5,7 @@ services:
         build:
             context: ./docker/php
             args:
-                phpunit_version: 9.5.4
+                phpunit_version: 11.4.3
         working_dir: /app
         volumes:
             - '.:/app'
