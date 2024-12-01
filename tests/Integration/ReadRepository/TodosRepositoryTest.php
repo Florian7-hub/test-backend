@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\ReadRepository;
 
 use App\Application\ReadModel\OpenedTodo;
+use App\Application\ReadModel\TodosRepository;
 use App\Domain\Todo;
 use App\Domain\TodoId;
 use App\Domain\TodoRepository;
@@ -44,7 +45,7 @@ final class TodosRepositoryTest extends TestCase
      * @test
      * @dataProvider provideConcretions
      */
-    public function it_finds_opened_todos(TodoRepository $repository): void
+    public function it_finds_opened_todos(InMemoryTodoRepository $repository): void
     {
         $anOpenedTodo = aTodo()->thatIsOpened()->savedIn($repository);
 
@@ -57,7 +58,7 @@ final class TodosRepositoryTest extends TestCase
      * @test
      * @dataProvider provideConcretions
      */
-    public function it_does_not_finds_closed_todos(TodoRepository $repository): void
+    public function it_does_not_finds_closed_todos(InMemoryTodoRepository $repository): void
     {
         $aClosedTodo = aTodo()->thatIsClosed()->savedIn($repository);
 
@@ -66,7 +67,7 @@ final class TodosRepositoryTest extends TestCase
         $this->assertThatArrayDoesNotContainsTodo($openedTodos, $aClosedTodo);
     }
 
-    public function provideConcretions(): \Generator
+    public static function provideConcretions(): \Generator
     {
         yield InMemoryTodoRepository::class => [new InMemoryTodoRepository()];
         // TODO: add other persistence type repositories here!

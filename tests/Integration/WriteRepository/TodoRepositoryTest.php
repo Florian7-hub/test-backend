@@ -40,7 +40,7 @@ final class TodoRepositoryTest extends TestCase
         $this->assertEquals($anExistingTodo, $repository->get($anExistingTodo->id()));
     }
 
-    public function provideConcretions(): \Generator
+    public static function provideConcretions(): \Generator
     {
         yield InMemoryTodoRepository::class => [new InMemoryTodoRepository()];
     }
