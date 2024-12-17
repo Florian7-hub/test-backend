@@ -11,6 +11,10 @@ use App\Domain\TodoRepository;
 use App\Infrastructure\Repository\InMemoryTodoRepository;
 use PHPUnit\Framework\TestCase;
 use function App\Tests\Fixtures\aTodo;
+use App\Infrastructure\Repository\PostgresTodoRepository;
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
 
 final class TodoRepositoryTest extends TestCase
 {
@@ -42,6 +46,23 @@ final class TodoRepositoryTest extends TestCase
 
     public static function provideConcretions(): \Generator
     {
+        // Load the .env file 
+        $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../../../'); 
+        $dotenv->load();
+
+        // Configuration de la connexion PostgreSQL
+        $connectionParams = [ 
+            'url' => $_ENV['DATABASE_URL'], 
+            'driver' => 'pdo_pgsql', 
+            'host' => 'db', 
+            'port' => 5432, 
+            'user' => 'florian', 
+            'password' => 'flodev', 
+            'dbname' => 'todo_list',
+        ];
+        $connection = \Doctrine\DBAL\DriverManager::getConnection($connectionParams);
+    
         yield InMemoryTodoRepository::class => [new InMemoryTodoRepository()];
-    }
+        yield PostgresTodoRepository::class => [new PostgresTodoRepository($connection)];
+    }    
 }

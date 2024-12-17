@@ -11,6 +11,9 @@ use App\Domain\TodoRepository;
 use App\Infrastructure\Repository\InMemoryTodoRepository;
 use PHPUnit\Framework\TestCase;
 use function App\Tests\Fixtures\aTodo;
+use App\Infrastructure\Repository\PostgresTodoRepository;
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 final class TodosRepositoryTest extends TestCase
 {
@@ -45,7 +48,7 @@ final class TodosRepositoryTest extends TestCase
      * @test
      * @dataProvider provideConcretions
      */
-    public function it_finds_opened_todos(InMemoryTodoRepository $repository): void
+    public function it_finds_opened_todos($repository): void
     {
         $anOpenedTodo = aTodo()->thatIsOpened()->savedIn($repository);
 
@@ -58,7 +61,7 @@ final class TodosRepositoryTest extends TestCase
      * @test
      * @dataProvider provideConcretions
      */
-    public function it_does_not_finds_closed_todos(InMemoryTodoRepository $repository): void
+    public function it_does_not_finds_closed_todos($repository): void
     {
         $aClosedTodo = aTodo()->thatIsClosed()->savedIn($repository);
 
@@ -69,8 +72,24 @@ final class TodosRepositoryTest extends TestCase
 
     public static function provideConcretions(): \Generator
     {
+        // Load the .env file 
+        $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../../../'); 
+        $dotenv->load();
+
+        // Configuration de la connexion PostgreSQL 
+        $connectionParams = [ 
+            'url' => $_ENV['DATABASE_URL'], 
+            'driver' => 'pdo_pgsql', 
+            'host' => 'db', 
+            'port' => 5432, 
+            'user' => 'florian', 
+            'password' => 'flodev', 
+            'dbname' => 'todo_list',
+        ];
+        $connection = \Doctrine\DBAL\DriverManager::getConnection($connectionParams);
+
         yield InMemoryTodoRepository::class => [new InMemoryTodoRepository()];
-        // TODO: add other persistence type repositories here!
+        yield PostgresTodoRepository::class => [new PostgresTodoRepository($connection)];
     }
 
     private function assertThatArrayContainsTodo(array $actualTodos, Todo $expectedTodo): void

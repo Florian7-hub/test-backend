@@ -1,6 +1,6 @@
 FROM php:8.3-cli-alpine
 
-RUN apk add postgresql-dev
+RUN apk add --no-cache postgresql-dev postgresql-client
 RUN docker-php-ext-install pdo_pgsql
 RUN docker-php-ext-install pgsql
 
@@ -11,4 +11,4 @@ RUN wget https://phar.phpunit.de/phpunit-$phpunit_version.phar
 RUN chmod +x phpunit-$phpunit_version.phar
 RUN mv phpunit-$phpunit_version.phar /usr/bin/phpunit
 
-CMD ["php", "-v"]
+CMD ["tail", "-f", "/dev/null"]

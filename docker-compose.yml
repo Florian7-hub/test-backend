@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
     php:
         build:
@@ -9,4 +7,18 @@ services:
         working_dir: /app
         volumes:
             - '.:/app'
-        user: '${UID:-1000}:${GID:-1000}'
+        environment:
+            DATABASE_URL: postgres://florian:flodev@db:5432/todo_list
+        depends_on:
+            - db
+
+    db:
+        image: postgres:14
+        environment:
+            POSTGRES_USER: florian
+            POSTGRES_PASSWORD: flodev
+            POSTGRES_DB: todo_list
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
