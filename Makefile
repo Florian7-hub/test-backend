@@ -24,4 +24,4 @@ clean:
 	docker compose down
 
 .PHONY: all
-all: test clean
+all: test

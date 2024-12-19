@@ -1,0 +1,5 @@
+framework:
+    assets:
+        packages:
+            frontend:
+                base_path: '/frontend'
